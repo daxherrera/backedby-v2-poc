@@ -36,14 +36,14 @@ export async function POST(request: NextRequest) {
         }
 
         // Verify signature
-        const publicKey = new PublicKey(walletAddress);
+        const walletPublicKey = new PublicKey(walletAddress);
         const messageBytes = new TextEncoder().encode(message);
         const signatureBytes = Buffer.from(signature, 'base64');
 
         const isValid = nacl.sign.detached.verify(
             messageBytes,
             signatureBytes,
-            publicKey.toBytes()
+            walletPublicKey.toBytes()
         );
 
         if (!isValid) {
@@ -69,8 +69,8 @@ export async function POST(request: NextRequest) {
         umi.use(mplBubblegum());
 
         // Get addresses from env
-        const merkleTree = publicKey(process.env.MERKLE_TREE || '');
-        const coreCollection = publicKey(process.env.COLLECTION_MINT || '');
+        const merkleTree = publicKey(process.env.MERKLE_TREE!);
+        const coreCollection = publicKey(process.env.COLLECTION_MINT!);
 
         // Upload metadata to Pinata
         let metadataUri = 'https://gateway.pinata.cloud/ipfs/QmPZFkpLFrjKkgXqJGkgoiRSCJVRQiRm9isvjNPUEacF8n'; // fallback
